@@ -2,26 +2,28 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <nav className="bg-[#5E2A00] text-white px-8 py-7 flex justify-between items-center font-bold uppercase text-sm shadow-md">
-      <div className="flex flex-wrap space-x-18">
+    <nav className="bg-[#5E2A00] text-white px-8 py-3 flex justify-between items-center">
+      <div className="flex space-x-15 text-sm font-bold uppercase">
         <Link to="/ordenar" className="hover:underline">Pide en línea</Link>
         <Link to="/inicio" className="hover:underline">Inicio</Link>
         <Link to="/promos" className="hover:underline">Promos</Link>
+        <Link to="/platos" className="hover:underline">Platos</Link>
         <Link to="/seguimiento" className="hover:underline">Sigue tu pedido</Link>
+        <Link to="/nosotros" className="hover:underline">Sobre nosotros</Link>
       </div>
 
-      <div className="flex space-x-2">
+      <div className="flex items-center space-x-2 text-sm font-bold uppercase">
         <Link
-          to="/login"
-          className="bg-black text-white px-5 py-3 rounded-sm hover:opacity-90 transition duration-200"
+          to="/"
+          className="bg-black text-white px-5 py-3 rounded-sm hover:opacity-90 transition"
         >
-          Iniciar sesión
+          Iniciar Sesión
         </Link>
         <Link
           to="/register"
-          className="bg-[#E4002B] text-white px-5 py-3 rounded-sm hover:opacity-90 transition duration-200"
+          className="bg-[#E4002B] text-white px-5 py-3 rounded-sm hover:opacity-90 transition"
         >
-          Crear cuenta
+          Crear Cuenta
         </Link>
       </div>
     </nav>
