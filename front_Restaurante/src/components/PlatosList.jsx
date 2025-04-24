@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import AddPlato from "./AddPlato";
-import EditPlato from "./EditPlato";
 
+import AddPlato from "./AddPlato.jsx";
+import EditPlato from "./EditPlato.jsx";
 const ListaPlatos = () => {
   const [platos, setPlatos] = useState([]);
   const [cargando, setCargando] = useState(true);
