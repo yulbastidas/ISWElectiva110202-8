@@ -1,9 +1,18 @@
 import re
 from rest_framework import serializers
-from AppRestaurante.models import Plato  # Se ajusta al nuevo nombre de la app y modelo
+from AppRestaurante.models import Plato
 
 # SERIALIZADOR DE PLATO
 class PlatoSerializer(serializers.ModelSerializer):
+    # Reescribimos el campo nombre para controlar el mensaje de error de "blank"
+    nombre = serializers.CharField(
+        allow_blank=False,
+        error_messages={
+            'blank': 'El nombre del plato no puede estar vacío.',
+            'required': 'El campo nombre es obligatorio.'
+        }
+    )
+
     categoria = serializers.CharField(source='get_categoria_display', read_only=True)
 
     class Meta:
@@ -11,10 +20,10 @@ class PlatoSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre', 'precio', 'descripcion', 'categoria']
 
     def validate_nombre(self, value):
-        """Validar que el nombre no esté vacío y tenga formato adecuado."""
+        """Validar que el nombre tenga formato adecuado."""
         value = value.strip().title()
-        if not value:
-            raise serializers.ValidationError("El nombre del plato no puede estar vacío.")
+
+        # Ya validamos 'blank' arriba, así que aquí solo validamos formato
         if not re.match(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}$', value):
             raise serializers.ValidationError("El nombre del plato solo debe contener letras.")
         return value
