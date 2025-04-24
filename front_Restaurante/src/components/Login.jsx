@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -13,6 +12,12 @@ export default function Login() {
     e.preventDefault();
     setError(null);
 
+    // Verificar que los campos no estén vacíos antes de hacer la petición
+    if (!username || !password) {
+      setError("Por favor ingresa ambos campos.");
+      return;
+    }
+
     try {
       const response = await axios.post("http://localhost:8000/api/usuarios/login/", {
         username,
@@ -20,22 +25,23 @@ export default function Login() {
       });
 
       const token = response.data.token;
-      localStorage.setItem("token", token);
 
-      alert("Login successful!");
-      navigate("/platos");
+      // Guardar token y nombre de usuario en localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", username);
+
+      alert("¡Inicio de sesión exitoso!");
+      navigate("/platos"); // Redirigir al usuario después de iniciar sesión
     } catch (err) {
-      setError("Invalid credentials");
+      setError("Credenciales inválidas");
     }
   };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-md border border-gray-300 rounded-md overflow-hidden shadow-md">
-        {/* Parte superior marrón */}
         <div className="bg-[#643200] h-16"></div>
 
-        {/* Contenido del formulario */}
         <div className="p-8">
           <h1 className="text-3xl font-bold text-center text-black mb-1 uppercase">
             Iniciar Sesión

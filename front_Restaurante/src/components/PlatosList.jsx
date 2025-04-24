@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AddPlato from "./AddPlato";
 import EditPlato from "./EditPlato";
@@ -10,8 +11,15 @@ const ListaPlatos = () => {
     const [mostrarAgregarPlato, setMostrarAgregarPlato] = useState(false);
     const [mostrarEditarPlato, setMostrarEditarPlato] = useState(false);
     const [platoSeleccionado, setPlatoSeleccionado] = useState(null);
+    const [usuarioAutenticado, setUsuarioAutenticado] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        const nombreUsuario = localStorage.getItem("usuario");
+        if (nombreUsuario) {
+            setUsuarioAutenticado(nombreUsuario);
+        }
+
         axios.get("http://127.0.0.1:8000/api/restaurante/")
             .then((response) => {
                 setPlatos(response.data.platos);
@@ -23,6 +31,12 @@ const ListaPlatos = () => {
                 setCargando(false);
             });
     }, []);
+
+    const cerrarSesion = () => {
+        localStorage.removeItem("usuario");
+        setUsuarioAutenticado(null);
+        navigate("/login");
+    };
 
     const manejarAgregarPlato = (nuevoPlato) => {
         setPlatos((prev) => [...prev, nuevoPlato]);
@@ -59,6 +73,21 @@ const ListaPlatos = () => {
 
     return (
         <div>
+            {/* Header con mensaje de bienvenida o sesión */}
+            {usuarioAutenticado && (
+                <div className="bg-gray-100 p-4 text-right flex justify-end items-center gap-4">
+                    <span className="text-gray-700 font-semibold">
+                        Bienvenido, {usuarioAutenticado}
+                    </span>
+                    <button
+                        onClick={cerrarSesion}
+                        className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                        Cerrar sesión
+                    </button>
+                </div>
+            )}
+
             {/* Cuadro rojo con el logo y la frase */}
             <div className="flex flex-col items-center bg-red-600 text-white py-6 px-4 w-full">
                 <div className="w-full h-40 bg-red-800 flex items-center justify-center mb-4">
@@ -111,7 +140,6 @@ const ListaPlatos = () => {
                                     >
                                         Eliminar
                                     </button>
-                                    {/* Botón para añadir al carrito */}
                                     <button
                                         onClick={() => alert(`Plato ${plato.nombre} añadido al carrito`)}
                                         className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
