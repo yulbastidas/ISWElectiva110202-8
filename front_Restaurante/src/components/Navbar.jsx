@@ -8,25 +8,25 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Recuperar el nombre de usuario desde localStorage al cargar el componente
+    
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
-      setUsername(storedUsername); // Si existe el nombre de usuario, lo guardamos en el estado
+      setUsername(storedUsername); 
     }
   }, []);
 
   const handleLogout = () => {
-    // Eliminar token y nombre de usuario de localStorage al cerrar sesión
+    
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    setUsername(null); // Limpiar el estado del nombre de usuario
+    setUsername(null); 
     navigate("/"); // Redirigir a la página principal
   };
 
   const toggleMenu = () => setShowMenu(!showMenu);
 
   return (
-    <nav className="bg-[#5E2A00] text-white px-8 py-3 flex justify-between items-center relative">
+    <nav className="bg-[#5E2A00] text-white px-10 py-5 flex justify-between items-center relative">
       <div className="flex space-x-15 text-sm font-bold uppercase">
         <Link to="/ordenar" className="hover:underline">Pide en línea</Link>
         <Link to="/inicio" className="hover:underline">Inicio</Link>
@@ -38,7 +38,7 @@ export default function Navbar() {
 
       <div className="flex items-center space-x-2 text-sm font-bold uppercase relative">
         {username ? (
-          // Si hay un nombre de usuario, mostrar saludo y menú de opciones
+          
           <div className="relative">
             <button
               onClick={toggleMenu}
@@ -60,7 +60,7 @@ export default function Navbar() {
             )}
           </div>
         ) : (
-          // Si no hay un nombre de usuario, mostrar los botones de inicio de sesión y registro
+          
           <>
             <Link
               to="/"

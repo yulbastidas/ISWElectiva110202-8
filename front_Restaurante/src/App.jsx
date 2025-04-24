@@ -1,18 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
-import PlatosList from "./components/PlatosList.jsx"; // ✅ Importa la lista de platos
-import Navbar from "./components/Navbar.jsx"; // ✅ Importa el navbar
+import PlatosList from "./components/PlatosList.jsx";
+import Navbar from "./components/Navbar.jsx";
+import PasswordReset from "./components/PasswordReset.jsx"; 
+import PasswordVerify from "./components/PasswordVerify.jsx"; // Asegúrate de importar el componente de verificación
 
 function App() {
   return (
     <Router>
-      <Navbar /> {/* ✅ Barra de navegación */}
+      <Navbar />
       <div className="p-4">
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/platos" element={<PlatosList />} /> {/* ✅ Ruta principal para platos */}
+          <Route path="/platos" element={<PlatosList />} />
+          <Route path="/password-reset" element={<PasswordReset />} />
+          <Route path="/password-verify" element={<PasswordVerify />} /> {/* Asegúrate de agregar esta ruta */}
         </Routes>
       </div>
     </Router>
