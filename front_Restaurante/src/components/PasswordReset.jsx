@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Para redirigir a la siguiente página
+import { useNavigate } from "react-router-dom"; 
 
 export default function PasswordReset() {
   const [email, setEmail] = useState("");
@@ -12,18 +12,18 @@ export default function PasswordReset() {
     setError("");
     setMessage("");
 
-    // Simulando la respuesta exitosa del backend
+    
     if (email === "") {
       setError("Por favor, ingresa un correo válido.");
       return;
     }
 
-    // Simulamos que el correo fue enviado correctamente
+    
     setMessage("Código de recuperación enviado a tu correo.");
 
-    // Redirigir al usuario a la página de verificación del código
+    
     setTimeout(() => {
-      navigate("/password-verify"); // Navega a la página de verificación de código
+      navigate("/password-verify"); 
     }, 2000);
   };
 

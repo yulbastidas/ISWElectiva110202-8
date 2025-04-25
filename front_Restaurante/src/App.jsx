@@ -16,7 +16,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/platos" element={<PlatosList />} />
           <Route path="/password-reset" element={<PasswordReset />} />
-          <Route path="/password-verify" element={<PasswordVerify />} /> {/* Asegúrate de agregar esta ruta */}
+          <Route path="/password-verify" element={<PasswordVerify />} /> {}
         </Routes>
       </div>
     </Router>

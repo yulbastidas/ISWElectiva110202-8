@@ -14,7 +14,7 @@ export default function PasswordVerify() {
     setError("");
     setSuccess("");
 
-    // Simulación de código correcto (ej: "123456")
+    
     if (codigo !== "123456") {
       setError("Código incorrecto. Intenta con '123456'.");
       return;
@@ -27,9 +27,9 @@ export default function PasswordVerify() {
 
     setSuccess("¡Contraseña actualizada exitosamente!");
 
-    // Simular redirección después de unos segundos
+    
     setTimeout(() => {
-      navigate("/"); // Redirigir a la página de inicio
+      navigate("/"); 
     }, 2000);
   };
 
