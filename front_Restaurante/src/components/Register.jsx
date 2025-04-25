@@ -23,7 +23,6 @@ export default function Register() {
   };
 
   const validateEmail = (email) => {
-    // Expresión regular simple para validar el correo electrónico
     const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return re.test(email);
   };
@@ -50,7 +49,6 @@ export default function Register() {
         password,
       });
 
-      // Guardar username en localStorage para mostrar saludo
       localStorage.setItem("username", username);
 
       alert("Registro exitoso. Redirigiendo...");
@@ -67,13 +65,13 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="w-full max-w-md border border-gray-300 rounded-md overflow-hidden m-4 shadow-lg">
-        <div className="bg-amber-900 h-12 rounded-t-md"></div>
-        <h2 className="text-xl text-gray-700 font-semibold text-center mt-4">
+      <div className="w-full max-w-md border border-gray-300 rounded-md overflow-hidden m-4 shadow-lg animate-fade-in">
+        <div className="bg-amber-900 h-12 rounded-t-md animate-slide-down"></div>
+        <h2 className="text-2xl text-gray-700 font-bold text-center mt-4 animate-fade-in-up">
           Registro de Usuario
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4 p-6">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6 animate-fade-in-up delay-100">
           <input
             type="text"
             name="username"
@@ -81,7 +79,7 @@ export default function Register() {
             value={formData.username}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300"
           />
 
           <input
@@ -91,7 +89,7 @@ export default function Register() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300"
           />
 
           <input
@@ -101,10 +99,10 @@ export default function Register() {
             value={formData.password}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300"
           />
 
-          <div className="flex items-center text-sm">
+          <div className="flex items-center text-sm animate-fade-in-up delay-150">
             <input
               type="checkbox"
               name="terms"
@@ -121,12 +119,14 @@ export default function Register() {
           </div>
 
           {error && (
-            <p className="text-red-600 text-sm text-center">{error}</p>
+            <p className="text-red-600 text-sm text-center animate-pulse">
+              {error}
+            </p>
           )}
 
           <button
             type="submit"
-            className="w-full bg-red-600 text-white p-3 text-lg rounded hover:bg-red-700 transition duration-200"
+            className="w-full bg-red-600 text-white p-3 text-lg rounded hover:bg-red-700 transition duration-200 animate-fade-in-up delay-200"
           >
             Registrarse
           </button>
