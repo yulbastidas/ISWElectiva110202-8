@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
-const ListaPlatos = () => {
+const ListaPlatos = ({ onAgregarAlCarrito, carrito }) => { // Recibe la prop 'carrito'
   const [platos, setPlatos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
@@ -74,6 +74,8 @@ const ListaPlatos = () => {
     setMostrarEditarPlato(true);
   };
 
+  const carritoCantidad = carrito ? carrito.reduce((acc, item) => acc + item.cantidad, 0) : 0;
+
   if (cargando) return <p className="text-center text-gray-500">Cargando platos...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
@@ -107,22 +109,23 @@ const ListaPlatos = () => {
           <h1 className="text-xl font-bold text-red-600 text-center leading-tight mb-4">
             "UN MUNDO LLENO <br /> DE SABOR"
           </h1>
-          <div
-            className="bg-amber-900 text-white font-bold py-3 px-8 rounded-full shadow-md text-center"
+          <Link
+            to="/carrito"
+            className="bg-amber-900 text-white font-bold py-3 px-8 rounded-full shadow-md text-center hover:bg-amber-700 transition duration-300"
           >
-            EXPLORAR MENÚ
-          </div>
+            VER CARRITO
+          </Link>
         </div>
       </div>
 
       {/* Filtro de menú */}
       <div className="max-w-6xl mx-auto px-5 py-10 flex flex-col sm:flex-row justify-between items-center">
         <h2 className="text-2xl font-bold text-black mb-4 sm:mb-0">Explorar Menú</h2>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 relative"> {/* Añade 'relative' al div contenedor */}
           <select
             value={categoriaSeleccionada}
             onChange={(e) => setCategoriaSeleccionada(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2"
+            className="border border-gray-300 rounded px-3 py-2 focus:ring-red-500 focus:border-red-500"
           >
             <option>Populares</option>
             <option>Entradas</option>
@@ -130,9 +133,14 @@ const ListaPlatos = () => {
             <option>Postres</option>
             <option>Bebidas</option>
           </select>
-          <button className="text-2xl">
+          <Link to="/carrito" className="text-2xl text-red-600 hover:text-red-700 transition duration-300 relative"> {/* Añade 'relative' al Link */}
             🛒
-          </button>
+            {carritoCantidad > 0 && (
+              <span className="absolute top-[-8px] right-[-8px] bg-white text-red-600 rounded-full text-xs font-semibold px-2 py-0.5">
+                {carritoCantidad}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
 
@@ -141,26 +149,39 @@ const ListaPlatos = () => {
         {platos.length === 0 ? (
           <p className="text-center text-gray-500">No hay platos disponibles.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {platos.map((plato) => (
               <div
                 key={plato.id}
                 className="bg-white border rounded-lg shadow hover:shadow-lg transition flex flex-col items-center p-4"
               >
-                <div className="w-full h-40 bg-gray-100 mb-3 flex items-center justify-center rounded">
-                  <span className="text-gray-400">[Imagen]</span>
+                <div className="w-full h-48 bg-gray-100 mb-3 flex items-center justify-center rounded overflow-hidden">
+                  {plato.imagen ? (
+                    <img
+                      src={plato.imagen}
+                      alt={plato.nombre}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error("Error loading image:", plato.imagen);
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/150?text=Sin+Imagen";
+                      }}
+                    />
+                  ) : (
+                    <span className="text-gray-400">Sin Imagen</span>
+                  )}
                 </div>
-                <h3 className="text-lg font-bold">{plato.nombre}</h3>
-                <p className="text-gray-500 text-sm">{plato.descripcion}</p>
-                <p className="text-black font-semibold text-lg mt-2">
+                <h3 className="text-lg font-semibold text-center text-gray-800">{plato.nombre}</h3>
+                <p className="text-gray-500 text-sm text-center line-clamp-2">{plato.descripcion}</p>
+                <p className="text-red-600 font-bold text-lg mt-2 text-center">
                   ${plato.precio}
                 </p>
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap justify-center gap-2 mt-4">
                   <button
-                    onClick={() => alert(`Plato ${plato.nombre} añadido al carrito`)}
-                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                    onClick={() => onAgregarAlCarrito(plato)}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300"
                   >
-                    Añadir al carrito
+                    Añadir
                   </button>
                 </div>
               </div>

@@ -106,7 +106,7 @@ const AdminPlatos = () => {
       {platos.length === 0 ? (
         <p className="text-center text-gray-500">No hay platos disponibles.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="flex flex-wrap gap-8">
           {platos.map((plato) => (
             <div
               key={plato.id}
