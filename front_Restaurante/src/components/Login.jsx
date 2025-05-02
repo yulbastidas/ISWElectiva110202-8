@@ -29,7 +29,13 @@ export default function Login() {
       localStorage.setItem("username", username);
 
       alert("¡Inicio de sesión exitoso!");
-      navigate("/platos");
+
+      if (username === "admin") {
+        navigate("/platos");
+      } else {
+        navigate("/menu");
+      }
+
     } catch (err) {
       setError("Credenciales inválidas");
     }

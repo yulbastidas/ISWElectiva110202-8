@@ -6,7 +6,8 @@ const AddPlato = ({ onClose, onAddPlato }) => {
     nombre: "",
     descripcion: "",
     categoria: "ENTRADA",
-    precio: ""
+    precio: "",
+    imagen: "", // Nuevo campo para la URL de la imagen
   });
 
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,8 @@ const AddPlato = ({ onClose, onAddPlato }) => {
     { value: "ENTRADA", label: "Entrada" },
     { value: "PRINCIPAL", label: "Principal" },
     { value: "POSTRE", label: "Postre" },
-    { value: "BEBIDA", label: "Bebida" }
+    { value: "BEBIDA", label: "Bebida" },
+    { value: "POPULARES", label: "Populares" }, // Añadí Populares si lo necesitas
   ];
 
   const validateForm = () => {
@@ -114,6 +116,17 @@ const AddPlato = ({ onClose, onAddPlato }) => {
               min="0.01"
             />
             {validationErrors.precio && <p className="text-red-500 text-sm">{validationErrors.precio}</p>}
+          </div>
+          {/* Nuevo campo para la URL de la imagen */}
+          <div>
+            <input
+              type="url"
+              name="imagen"
+              placeholder="URL de la Imagen (opcional)"
+              value={formData.imagen}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
           </div>
           <div className="flex justify-between">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">

@@ -5,7 +5,7 @@ from rest_framework import status, permissions, authentication
 from AppRestaurante.models import Plato  
 from .serializers import PlatoSerializer
 
-# ---------------------- GESTIÓN DE PLATOS ----------------------
+#  GESTIÓN DE PLATOS 
 class PlatoApiView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.AllowAny]

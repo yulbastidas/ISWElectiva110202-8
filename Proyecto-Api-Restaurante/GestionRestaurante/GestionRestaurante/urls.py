@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/restaurante/", include("AppRestaurante.urls")),  # ← muy importante
 
-    path("api/usuarios/", include("AppUsuarios.urls")), 
+
+urlpatterns = [  # <--- Asegúrate de que esto sea una LISTA (con corchetes [])
+    path("admin/", admin.site.urls),
+    path("api/restaurante/", include("AppRestaurante.urls")),
+    path("api/usuarios/", include("AppUsuarios.urls")),
 ]

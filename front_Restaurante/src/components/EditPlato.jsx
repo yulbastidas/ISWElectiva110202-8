@@ -7,6 +7,7 @@ const EditPlato = ({ plato, onClose, onUpdatePlato }) => {
     categoria: plato.categoria,
     precio: plato.precio,
     disponible: plato.disponible,
+    imagen: plato.imagen || '', // Inicializa con la URL existente o una cadena vacía
   });
 
   const [errors, setErrors] = useState({});
@@ -28,20 +29,15 @@ const EditPlato = ({ plato, onClose, onUpdatePlato }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
-    console.log(formData); // Verifica que los datos estén correctos
-  
+
     try {
       await axios.put(`http://127.0.0.1:8000/api/restaurante/${encodeURIComponent(formData.nombre)}/`, formData);
-
-
       onUpdatePlato(formData);
       onClose();
     } catch (error) {
       console.error("Error al actualizar el plato:", error.response ? error.response.data : error.message);
     }
   };
-  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
@@ -86,6 +82,18 @@ const EditPlato = ({ plato, onClose, onUpdatePlato }) => {
               className="w-full p-2 border rounded"
             />
             {errors.precio && <p className="text-red-500 text-sm">{errors.precio}</p>}
+          </div>
+
+          {/* Nuevo campo para la URL de la imagen */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">URL de la Imagen</label>
+            <input
+              type="url"
+              name="imagen"
+              value={formData.imagen}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
           </div>
 
           <div className="flex items-center space-x-2">

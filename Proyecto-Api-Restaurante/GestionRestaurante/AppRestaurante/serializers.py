@@ -17,7 +17,7 @@ class PlatoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Plato
-        fields = ['id', 'nombre', 'precio', 'descripcion', 'categoria']
+        fields = ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'imagen'] # Agregamos 'imagen' aquí
 
     def validate_nombre(self, value):
         """Validar que el nombre tenga formato adecuado."""

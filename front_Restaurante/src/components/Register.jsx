@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -51,8 +52,8 @@ export default function Register() {
 
       localStorage.setItem("username", username);
 
-      alert("Registro exitoso. Redirigiendo...");
-      navigate("/platos");
+      alert("Registro exitoso. Redirigiendo al menú...");
+      navigate("/menu"); // Redirige al menú después del registro
     } catch (err) {
       if (err.response && err.response.data) {
         console.error("Detalles del error:", err.response.data);
@@ -64,14 +65,28 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="w-full max-w-md border border-gray-300 rounded-md overflow-hidden m-4 shadow-lg animate-fade-in">
-        <div className="bg-amber-900 h-12 rounded-t-md animate-slide-down"></div>
-        <h2 className="text-2xl text-gray-700 font-bold text-center mt-4 animate-fade-in-up">
+    <motion.div
+      className="min-h-screen flex items-center justify-center bg-white px-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      <motion.div
+        className="w-full max-w-md border border-gray-300 rounded-md overflow-hidden m-4 shadow-lg"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 80, damping: 15 }}
+      >
+        <motion.div className="bg-[#643200] h-16"
+          initial={{ width: 0 }}
+          animate={{ width: "100%" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        ></motion.div>
+        <h2 className="text-2xl text-gray-700 font-bold text-center mt-4">
           Registro de Usuario
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4 p-6 animate-fade-in-up delay-100">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6">
           <input
             type="text"
             name="username"
@@ -102,7 +117,7 @@ export default function Register() {
             className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300"
           />
 
-          <div className="flex items-center text-sm animate-fade-in-up delay-150">
+          <div className="flex items-center text-sm">
             <input
               type="checkbox"
               name="terms"
@@ -112,9 +127,9 @@ export default function Register() {
             />
             <label>
               Acepto los{" "}
-              <a href="#" className="text-blue-600 hover:underline">
+              <Link to="/terms" className="text-blue-600 hover:underline">
                 términos y condiciones
-              </a>
+              </Link>
             </label>
           </div>
 
@@ -126,12 +141,18 @@ export default function Register() {
 
           <button
             type="submit"
-            className="w-full bg-red-600 text-white p-3 text-lg rounded hover:bg-red-700 transition duration-200 animate-fade-in-up delay-200"
+            className="w-full bg-red-600 text-white p-3 text-lg rounded hover:bg-red-700 transition duration-200"
           >
             Registrarse
           </button>
+          <p className="text-center text-gray-600 text-sm mt-2">
+            ¿Ya tienes una cuenta?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Iniciar Sesión
+            </Link>
+          </p>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
