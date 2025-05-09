@@ -8,6 +8,7 @@ import PasswordReset from "./components/PasswordReset.jsx";
 import PasswordVerify from "./components/PasswordVerify.jsx";
 import Menu from "./components/Menu.jsx"; // Importa el componente que crearás para el menú de usuario
 import CarritoCompras from "./components/CarritoCompras.jsx"; // Importa el componente CarritoCompras
+import PedidoConfirmado from "./components/PedidoConfirmado.jsx"; // Importa el componente PedidoConfirmado
 
 function App() {
   const [carrito, setCarrito] = useState([]); // Estado para el carrito
@@ -33,6 +34,10 @@ function App() {
     setCarrito(carrito.filter(item => item.id !== platoId));
   };
 
+  const vaciarCarrito = () => {
+    setCarrito([]);
+  };
+
   const carritoCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
   return (
@@ -47,7 +52,13 @@ function App() {
           <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/password-verify" element={<PasswordVerify />} />
           <Route path="/menu" element={<Menu onAgregarAlCarrito={agregarAlCarrito} carrito={carrito} />} /> {/* Pasa la función y el carrito al Menu */}
-          <Route path="/carrito" element={<CarritoCompras carrito={carrito} onActualizarCantidad={actualizarCantidad} onEliminarDelCarrito={eliminarDelCarrito} />} /> {/* Ruta para el carrito */}
+          <Route path="/carrito" element={<CarritoCompras
+            carrito={carrito}
+            onActualizarCantidad={actualizarCantidad}
+            onEliminarDelCarrito={eliminarDelCarrito}
+            onVaciarCarrito={vaciarCarrito} // Pasa la función para vaciar el carrito
+          />} /> {/* Ruta para el carrito */}
+          <Route path="/pedido-confirmado" element={<PedidoConfirmado />} /> {/* Ruta para la confirmación del pedido */}
         </Routes>
       </div>
     </Router>

@@ -2,7 +2,6 @@ import re
 from rest_framework import serializers
 from AppRestaurante.models import Plato, Pedido, ItemPedido
 
-# SERIALIZADOR DE PLATO (ya existente)
 class PlatoSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(
         allow_blank=False,
@@ -28,30 +27,69 @@ class PlatoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("El precio debe ser mayor a 0.")
         return value
 
-# SERIALIZADOR DE ITEM DE PEDIDO
-class ItemPedidoSerializer(serializers.ModelSerializer):
-    plato_nombre = serializers.CharField(source='plato.nombre', read_only=True)
-    plato_precio = serializers.DecimalField(source='plato.precio', max_digits=6, decimal_places=2, read_only=True)
 
+class ItemPedidoSerializer(serializers.ModelSerializer):
+    # Eliminamos los campos innecesarios para la creación de un pedido.
     class Meta:
         model = ItemPedido
-        fields = ['plato', 'plato_nombre', 'plato_precio', 'cantidad', 'precio_unitario', 'subtotal']
+        fields = ['plato', 'cantidad', 'precio_unitario', 'subtotal']
 
-# SERIALIZADOR DE PEDIDO
+
 class PedidoSerializer(serializers.ModelSerializer):
     items = ItemPedidoSerializer(many=True, read_only=True)
     total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    usuario = serializers.PrimaryKeyRelatedField(read_only=True) # Para mostrar el ID del usuario
+    usuario = serializers.PrimaryKeyRelatedField(read_only=True)
+    direccion_envio = serializers.CharField(allow_blank=True, required=False)
 
     class Meta:
         model = Pedido
-        fields = ['id', 'usuario', 'fecha_pedido', 'total', 'items']
+        fields = ['id', 'usuario', 'fecha_pedido', 'total', 'items', 'direccion_envio']
 
-# SERIALIZADOR PARA CREAR PEDIDO (RECIBIR DATOS DEL FRONTEND)
-class CrearPedidoItemSerializer(serializers.Serializer):  # Serializador para cada item del pedido
+
+class CrearPedidoItemSerializer(serializers.Serializer):
     plato_id = serializers.IntegerField()
     cantidad = serializers.IntegerField(min_value=1)
-    precio_unitario = serializers.DecimalField(max_digits=6, decimal_places=2)
+
+    def validate_plato_id(self, value):
+        # Asegurarse de que el plato exista.
+        if not Plato.objects.filter(id=value).exists():
+            raise serializers.ValidationError(f"No existe ningún plato con ID {value}.")
+        return value
+
 
 class CrearPedidoSerializer(serializers.Serializer):
-    items = serializers.ListField(child=CrearPedidoItemSerializer()) # Usamos el serializador para cada item
+    items = serializers.ListField(
+        child=CrearPedidoItemSerializer(),
+        allow_empty=False,
+        error_messages={
+            'required': 'Debes enviar al menos un ítem en el pedido.',
+            'blank': 'La lista de items no puede estar vacía.',
+            'null': 'La lista de items no puede ser nula.'
+        }
+    )
+    direccion_envio = serializers.CharField(allow_blank=True, required=False)  # Dirección de envío, opcional
+
+    def create(self, validated_data):
+        usuario = self.context['request'].user  # Usuario logueado
+        direccion_envio = validated_data.pop('direccion_envio', '')  # Obtener la dirección de envío
+        items_data = validated_data.pop('items')  # Obtener los items del pedido
+
+        # Crear el pedido
+        pedido = Pedido.objects.create(usuario=usuario, direccion_envio=direccion_envio)
+
+        total_pedido = 0
+        for item_data in items_data:
+            plato = Plato.objects.get(pk=item_data['plato_id'])  # Obtener el plato por su ID
+            subtotal = item_data['cantidad'] * plato.precio  # Calcular el subtotal
+            ItemPedido.objects.create(
+                pedido=pedido,
+                plato=plato,
+                cantidad=item_data['cantidad'],
+                precio_unitario=plato.precio,
+                subtotal=subtotal
+            )
+            total_pedido += subtotal  # Sumar el subtotal al total del pedido
+
+        pedido.total = total_pedido  # Establecer el total del pedido
+        pedido.save()  # Guardar el pedido
+        return pedido
