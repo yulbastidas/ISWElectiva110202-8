@@ -16,7 +16,7 @@ SECRET_KEY = "django-insecure-6xwef=#=55vr)*q2ymvpn2h3=80a&d%tb)fx+u*q@%&z9+h8%5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -68,11 +68,11 @@ WSGI_APPLICATION = "GestionRestaurante.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "gestionrestaurante",  # El nombre de tu base de datos PostgreSQL
-        "USER": "admin",              # El usuario de PostgreSQL
-        "PASSWORD": "admin1223",      # La contraseña del usuario de PostgreSQL
-        "HOST": "localhost",          # El host de PostgreSQL (generalmente 'localhost')
-        "PORT": "5432",              # El puerto de PostgreSQL (generalmente '5432')
+        "NAME": "gestionrestaurante",  
+        "USER": "admin",             
+        "PASSWORD": "admin1223",     
+        "HOST": "localhost",        
+        "PORT": "5432",              
     }
 }
 
