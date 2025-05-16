@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions, authentication
 from AppRestaurante.models import Plato, Pedido
 from .serializers import PlatoSerializer, PedidoSerializer, CrearPedidoSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 import logging
 
 logger = logging.getLogger(__name__)
@@ -47,9 +47,9 @@ class PlatoApiView(APIView):
         return Response({"message": "Plato eliminado correctamente"}, status=status.HTTP_200_OK)
 
 
-# Vista para crear pedidos
+# Vista para crear pedidos sin autenticación
 class CrearPedidoView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = CrearPedidoSerializer(data=request.data, context={'request': request})
@@ -57,7 +57,10 @@ class CrearPedidoView(APIView):
             try:
                 pedido = serializer.save()
                 pedido_serializer = PedidoSerializer(pedido)
-                logger.info(f"Pedido creado exitosamente para el usuario {request.user.username}.")
+
+                usuario = request.user.username if request.user.is_authenticated else 'anónimo'
+                logger.info(f"Pedido creado exitosamente por el usuario: {usuario}")
+
                 return Response(pedido_serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 logger.error(f"Error al crear el pedido: {str(e)}", exc_info=True)

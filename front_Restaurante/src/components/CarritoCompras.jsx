@@ -46,8 +46,11 @@ const CarritoCompras = ({ carrito, onActualizarCantidad, onEliminarDelCarrito, o
 
       if (response.status === 201) {
         setMensaje('Pedido realizado con éxito. ¡Gracias por tu compra!');
+        const pedidoRealizado = response.data; // Asumiendo que la API devuelve información del pedido
+
+        // Navegar a PedidoConfirmado y pasar los datos del carrito
+        navigate('/pedido-confirmado', { state: { carrito: [...carrito], totalCarrito: totalCarrito } });
         onVaciarCarrito();
-        navigate('/pedido-confirmado');
       } else {
         setMensaje('Hubo un error al realizar el pedido. Por favor, inténtalo de nuevo.');
         console.error('Error en la respuesta del pedido:', response);

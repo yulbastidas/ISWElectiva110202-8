@@ -67,20 +67,24 @@ class CrearPedidoSerializer(serializers.Serializer):
             'null': 'La lista de items no puede ser nula.'
         }
     )
-    direccion_envio = serializers.CharField(allow_blank=True, required=False)  # Dirección de envío, opcional
+    direccion_envio = serializers.CharField(allow_blank=True, required=False)
 
     def create(self, validated_data):
-        usuario = self.context['request'].user  # Usuario logueado
-        direccion_envio = validated_data.pop('direccion_envio', '')  # Obtener la dirección de envío
-        items_data = validated_data.pop('items')  # Obtener los items del pedido
+        # Obtener el usuario autenticado (o None si es anónimo)
+        request = self.context.get('request')
+        usuario = request.user if request and request.user.is_authenticated else None
+
+        # Extraer los datos
+        direccion_envio = validated_data.pop('direccion_envio', '')
+        items_data = validated_data.pop('items')
 
         # Crear el pedido
         pedido = Pedido.objects.create(usuario=usuario, direccion_envio=direccion_envio)
 
         total_pedido = 0
         for item_data in items_data:
-            plato = Plato.objects.get(pk=item_data['plato_id'])  # Obtener el plato por su ID
-            subtotal = item_data['cantidad'] * plato.precio  # Calcular el subtotal
+            plato = Plato.objects.get(pk=item_data['plato_id'])
+            subtotal = item_data['cantidad'] * plato.precio
             ItemPedido.objects.create(
                 pedido=pedido,
                 plato=plato,
@@ -88,8 +92,8 @@ class CrearPedidoSerializer(serializers.Serializer):
                 precio_unitario=plato.precio,
                 subtotal=subtotal
             )
-            total_pedido += subtotal  # Sumar el subtotal al total del pedido
+            total_pedido += subtotal
 
-        pedido.total = total_pedido  # Establecer el total del pedido
-        pedido.save()  # Guardar el pedido
+        pedido.total = total_pedido
+        pedido.save()
         return pedido

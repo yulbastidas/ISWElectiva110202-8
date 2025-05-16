@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export default function Login() {
+export default function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -27,8 +27,10 @@ export default function Login() {
       const token = response.data.token;
       localStorage.setItem("token", token);
       localStorage.setItem("username", username);
+      localStorage.setItem("isAdmin", username === "admin" ? "true" : "false"); // Establece isAdmin
 
       alert("¡Inicio de sesión exitoso!");
+      onLoginSuccess(); // Llama a la función para actualizar el estado en App.js
 
       if (username === "admin") {
         navigate("/platos");
@@ -124,7 +126,7 @@ export default function Login() {
               transition={{ delay: 0.5 }}
             >
               <Link
-                to="/password-reset"
+                to="#"
                 className="font-semibold underline text-black hover:text-red-600"
               >
                 ¿Olvidaste tu contraseña?
@@ -136,6 +138,7 @@ export default function Login() {
                 className="text-red-600 text-sm text-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
               >
                 {error}
               </motion.p>
