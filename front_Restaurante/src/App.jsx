@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom"; // Se eliminó BrowserRouter de aquí
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import PlatosList from "./components/PlatosList.jsx";
@@ -55,12 +55,12 @@ function App() {
   };
 
   return (
-    <Router>
+    <> {/* Se reemplazó Router con un Fragment o un div si es necesario */}
       {isAuthenticated && <Navbar carritoCantidad={carritoCantidad} onLogoutSuccess={handleLogoutSuccess} />}
       <div className="p-4">
         <Routes>
           <Route path="/" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/login" element={<Navigate to="/" />} /> {/* Redirige /login a / */}
+          <Route path="/login" element={<Navigate to="/" />} />
           <Route path="/register" element={<Register />} />
           <Route path="/platos" element={<PlatosList />} />
           <Route path="/password-reset" element={<PasswordReset />} />
@@ -75,7 +75,7 @@ function App() {
           <Route path="/pedido-confirmado" element={<PedidoConfirmado />} />
         </Routes>
       </div>
-    </Router>
+    </>
   );
 }
 
