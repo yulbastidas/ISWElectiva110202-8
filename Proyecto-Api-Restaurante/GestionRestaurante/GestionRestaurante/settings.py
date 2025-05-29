@@ -10,13 +10,14 @@ import os  # Importa el módulo os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-6xwef=#=55vr)*q2ymvpn2h3=80a&d%tb)fx+u*q@%&z9+h8%5"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -64,17 +65,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "GestionRestaurante.wsgi.application"
 
+
 # Database
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "gestionrestaurante",  
-        "USER": "admin",             
-        "PASSWORD": "admin1223",     
-        "HOST": "localhost",        
-        "PORT": "5432",              
+        "NAME": "gestionrestaurante",  # El nombre de tu base de datos PostgreSQL
+        "USER": "admin",              # El usuario de PostgreSQL
+        "PASSWORD": "admin1223",      # La contraseña del usuario de PostgreSQL
+        "HOST": "localhost",          # El host de PostgreSQL (generalmente 'localhost')
+        "PORT": "5432",              # El puerto de PostgreSQL (generalmente '5432')
     }
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -92,14 +95,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Internationalization
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "UTC"
+
 USE_I18N = True
+
 USE_TZ = True
 
-# Static files
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.2/howto/static-files/
+
 STATIC_URL = "static/"
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -111,3 +122,21 @@ CORS_ALLOWED_ORIGINS = [
 
 # Opcional: si usas cookies con autenticación
 CORS_ALLOW_CREDENTIALS = True
+
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',  # Cambia a DEBUG para ver aún más detalles si es necesario
+        },
+    },
+}

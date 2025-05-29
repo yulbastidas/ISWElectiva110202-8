@@ -1,16 +1,23 @@
-import React, { useState } from "react"; // Importa useState
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import PlatosList from "./components/PlatosList.jsx";
 import Navbar from "./components/Navbar.jsx";
 import PasswordReset from "./components/PasswordReset.jsx";
 import PasswordVerify from "./components/PasswordVerify.jsx";
-import Menu from "./components/Menu.jsx"; // Importa el componente que crearás para el menú de usuario
-import CarritoCompras from "./components/CarritoCompras.jsx"; // Importa el componente CarritoCompras
+import Menu from "./components/Menu.jsx";
+import CarritoCompras from "./components/CarritoCompras.jsx";
+import PedidoConfirmado from "./components/PedidoConfirmado.jsx";
 
 function App() {
-  const [carrito, setCarrito] = useState([]); // Estado para el carrito
+  const [carrito, setCarrito] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, []);
 
   const agregarAlCarrito = (plato) => {
     const existe = carrito.find(item => item.id === plato.id);
@@ -33,21 +40,39 @@ function App() {
     setCarrito(carrito.filter(item => item.id !== platoId));
   };
 
+  const vaciarCarrito = () => {
+    setCarrito([]);
+  };
+
   const carritoCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogoutSuccess = () => {
+    setIsAuthenticated(false);
+  };
 
   return (
     <Router>
-      <Navbar carritoCantidad={carritoCantidad} /> {/* Pasa la cantidad al Navbar */}
+      {isAuthenticated && <Navbar carritoCantidad={carritoCantidad} onLogoutSuccess={handleLogoutSuccess} />}
       <div className="p-4">
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/login" element={<Navigate to="/" />} /> {/* Redirige /login a / */}
           <Route path="/register" element={<Register />} />
-          <Route path="/platos" element={<PlatosList />} /> {/* Esto podría ser para la gestión admin */}
+          <Route path="/platos" element={<PlatosList />} />
           <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/password-verify" element={<PasswordVerify />} />
-          <Route path="/menu" element={<Menu onAgregarAlCarrito={agregarAlCarrito} carrito={carrito} />} /> {/* Pasa la función y el carrito al Menu */}
-          <Route path="/carrito" element={<CarritoCompras carrito={carrito} onActualizarCantidad={actualizarCantidad} onEliminarDelCarrito={eliminarDelCarrito} />} /> {/* Ruta para el carrito */}
+          <Route path="/menu" element={<Menu onAgregarAlCarrito={agregarAlCarrito} carrito={carrito} />} />
+          <Route path="/carrito" element={<CarritoCompras
+            carrito={carrito}
+            onActualizarCantidad={actualizarCantidad}
+            onEliminarDelCarrito={eliminarDelCarrito}
+            onVaciarCarrito={vaciarCarrito}
+          />} />
+          <Route path="/pedido-confirmado" element={<PedidoConfirmado />} />
         </Routes>
       </div>
     </Router>

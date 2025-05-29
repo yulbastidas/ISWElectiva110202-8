@@ -22,7 +22,8 @@ class Pedido(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_pedido = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    # Puedes añadir más campos como dirección de entrega, estado del pedido, etc.
+    direccion_envio = models.TextField(blank=True, null=True)  # Nuevo campo para la dirección de envío
+    # Puedes añadir más campos como estado_pedido, metodo_pago, comentarios, etc.
 
     def __str__(self):
         return f"Pedido #{self.id} - {self.fecha_pedido}"

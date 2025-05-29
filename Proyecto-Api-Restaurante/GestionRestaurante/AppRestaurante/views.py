@@ -1,98 +1,70 @@
+# AppRestaurante/views.py
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, authentication
-from AppRestaurante.models import Plato, Pedido, ItemPedido
+from AppRestaurante.models import Plato, Pedido
 from .serializers import PlatoSerializer, PedidoSerializer, CrearPedidoSerializer
-from rest_framework.permissions import IsAuthenticated  # O la política de permisos que necesites
+from rest_framework.permissions import AllowAny
+import logging
 
-# GESTIÓN DE PLATOS (ya existente)
+logger = logging.getLogger(__name__)
+
+# Vista de platos
 class PlatoApiView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.AllowAny]
-    # ... (tus métodos get, post, put, delete de Plato tal cual están)
+
     def get(self, request, nombre=None, *args, **kwargs):
-        """Obtener un plato o la lista de todos los platos"""
         if nombre:
             plato = get_object_or_404(Plato, nombre=nombre)
-            serializador = PlatoSerializer(plato)
-            return Response({"message": "Plato encontrado", "plato": serializador.data}, status=status.HTTP_200_OK)
+            serializer = PlatoSerializer(plato)
+            return Response({"message": "Plato encontrado", "plato": serializer.data}, status=status.HTTP_200_OK)
 
         platos = Plato.objects.all()
-        serializador = PlatoSerializer(platos, many=True)
-        return Response({"message": "Lista de platos", "platos": serializador.data}, status=status.HTTP_200_OK)
+        serializer = PlatoSerializer(platos, many=True)
+        return Response({"message": "Lista de platos", "platos": serializer.data}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        """Crea un nuevo plato"""
         serializer = PlatoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {"message": "Plato registrado exitosamente", "plato": serializer.data},
-                status=status.HTTP_201_CREATED
-            )
-
-        return Response(
-            {"error": "Datos inválidos", "detalles": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response({"message": "Plato registrado exitosamente", "plato": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({"error": "Datos inválidos", "detalles": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, nombre, *args, **kwargs):
-        """Actualiza un plato existente"""
         plato = get_object_or_404(Plato, nombre=nombre)
         serializer = PlatoSerializer(plato, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {"message": "Plato actualizado correctamente", "plato": serializer.data},
-                status=status.HTTP_200_OK
-            )
-
-        return Response(
-            {"error": "Error en la actualización", "detalles": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response({"message": "Plato actualizado correctamente", "plato": serializer.data}, status=status.HTTP_200_OK)
+        return Response({"error": "Error en la actualización", "detalles": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, nombre, *args, **kwargs):
-        """Elimina un plato por su nombre"""
         plato = get_object_or_404(Plato, nombre=nombre)
         plato.delete()
         return Response({"message": "Plato eliminado correctamente"}, status=status.HTTP_200_OK)
 
-# GESTIÓN DE PEDIDOS
+
+# Vista para crear pedidos sin autenticación
 class CrearPedidoView(APIView):
-    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados pueden crear pedidos (ajusta según tu necesidad)
+    permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = CrearPedidoSerializer(data=request.data)
+        serializer = CrearPedidoSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            pedido = Pedido(usuario=request.user)
-            pedido.save()
-            total_pedido = 0
+            try:
+                pedido = serializer.save()
+                pedido_serializer = PedidoSerializer(pedido)
 
-            for item_data in serializer.validated_data['items']:
-                plato_id = item_data['plato_id']
-                cantidad = item_data['cantidad']
-                precio_unitario = item_data['precio_unitario']
+                usuario = request.user.username if request.user.is_authenticated else 'anónimo'
+                logger.info(f"Pedido creado exitosamente por el usuario: {usuario}")
 
-                try:
-                    plato = Plato.objects.get(pk=plato_id)
-                except Plato.DoesNotExist:
-                    pedido.delete()  # Si un plato no existe, elimina el pedido incompleto
-                    return Response({'error': f'El plato con ID {plato_id} no existe.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(pedido_serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                logger.error(f"Error al crear el pedido: {str(e)}", exc_info=True)
+                return Response({"error": "Error interno al crear el pedido."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-                item_pedido = ItemPedido(
-                    pedido=pedido,
-                    plato=plato,
-                    cantidad=cantidad,
-                    precio_unitario=precio_unitario
-                )
-                item_pedido.save()
-                total_pedido += item_pedido.subtotal
-
-            pedido.total = total_pedido
-            pedido.save()
-            pedido_serializer = PedidoSerializer(pedido)
-            return Response(pedido_serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        logger.warning(f"Datos inválidos al crear pedido: {serializer.errors}")
+        return Response({"error": "Datos inválidos", "detalles": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
