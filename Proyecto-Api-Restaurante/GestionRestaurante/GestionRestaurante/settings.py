@@ -70,11 +70,11 @@ WSGI_APPLICATION = "GestionRestaurante.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "gestionrestaurante",  # El nombre de tu base de datos PostgreSQL
-        "USER": "admin",              # El usuario de PostgreSQL
-        "PASSWORD": "admin1223",      # La contraseña del usuario de PostgreSQL
-        "HOST": "localhost",          # El host de PostgreSQL (generalmente 'localhost')
-        "PORT": "5432",              # El puerto de PostgreSQL (generalmente '5432')
+        "NAME": "gestionrestaurante",  
+        "USER": "admin",              
+        "PASSWORD": "eH9PYMCp1AJzcddNCGNHvQ9h5trUN00k",      
+        "HOST": "dpg-d0sga7k9c44c73f5aftg-a.oregon-postgres.render.com",          
+        "PORT": "5432",              
     }
 }
 
