@@ -68,4 +68,4 @@ jobs:
           app-name: 'pedidosrestaurante'
           slot-name: 'Production'
           package: Proyecto-Api-Restaurante
-          startup-command: gunicorn GestionRestaurante.wsgi:application --chdir Proyecto-Api-Restaurante
+          startup-command: gunicorn GestionRestaurante.GestionRestaurante.wsgi:application --chdir Proyecto-Api-Restaurante/GestionRestaurante
